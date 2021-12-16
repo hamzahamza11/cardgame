@@ -1,11 +1,10 @@
 import React from "react";
-import Card from "../components/Card";
+import Cards from "../components/CardSection";
 
 const GamePage = ()=>{
     return (
         <div>
-           <Card/>
-           <Card/>
+           <Cards/>
         </div>
     )
 }
