@@ -1,26 +1,21 @@
-const express= require("express");
+const express = require('express');
 const app = express();
-const session = require("express-session");
+
+const io = require("socket.io")(8900, {
+    cors: {
+      origin: "http://localhost:3000",
+    },
+  });
 
 
 
-app.use(session({secret:"my secret",resave:false,saveUninitialized:false})) 
-//
 
 
+io.on('connection', (socket) => {
+  console.log(socket.id);
+  socket.on("r1", (data)=>{
+      console.log(data)
+  })
+});
 
 
-
-app.get("/",(req,res)=>{
-  res.send("hello")
-})
-
-
-const PORT = process.env.PORT || 8001;
-
-app.listen(PORT,(err)=>{
-    if(err){
-        console.log(err);
-    }
-    console.log("app is running"+PORT);
-})
