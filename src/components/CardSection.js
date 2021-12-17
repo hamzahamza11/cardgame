@@ -4,6 +4,8 @@ import { io } from "socket.io-client";
 import { useSelector } from "react-redux";
 import { DATACARD, PLAYERS } from "../dummy-data/data";
 import Card from "./Card";
+import { useDispatch } from "react-redux";
+import { startGame } from "../store/actions/game";
 const ENDPOINT = "http://localhost:8900/";
 
 //////////////////////
@@ -19,8 +21,11 @@ const Container = styled.div`
 `;
 
 const CardSection = () => {
+    const disptach = useDispatch();
+    const [player1id , setPlayer1id] =  useState()
+    const [player2id , setPlayer2id] =  useState()
   const state = useSelector((state) => state.game);
-  
+  console.log(state)
 
   
   const player1Cards = state.player1.DATACARD.map((card) => {
@@ -31,21 +36,30 @@ const CardSection = () => {
     return <Card cardImg={card.img} val={card.val} />;
   });
 
-  useEffect(() => {
-    const socket = io(ENDPOINT);
+  const socket = io(ENDPOINT);
 
-    socket.on("connect", () => {
-      console.log("ouou" + socket.id);
-    });
-  },[player1Cards]);
-  useEffect(() => {
-    const socket = io(ENDPOINT);
+        useEffect(() => {
+            socket.on("connect", () => {
+                console.log(socket.id)
+               });
+             
+               socket.on("connect", () => {
+                console.log(socket.id)
+               });
+        }, [])
+     
+      
+    
+  
 
-    socket.on("connect", () => {
-      console.log("ouou" + socket.id);
-    });
-  },[player2Cards ]);
+  
+ 
 
+if(player1id && player2id)
+{
+   
+    disptach(startGame(player1id,player2id))
+}
  
 
   return (

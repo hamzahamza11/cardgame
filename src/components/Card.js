@@ -14,7 +14,8 @@ const CardContainer = styled.div`
 const Card = ({ cardImg, cardValue }) => {
   const [isFliped, setIsFliped] = useState(false);
    const state = useSelector(state => state)
-   console.log(state)
+
+  
   const cardBack =
     "https://media.istockphoto.com/photos/bicycle-rider-back-playing-card-design-picture-id157772536?k=20&m=157772536&s=170667a&w=0&h=46bM0a2wuwcddiOzNOHTfS9PcUzjXwNTTCy33SrkC_0=";
 

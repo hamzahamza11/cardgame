@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { START_GAME, FLIP_CARD } from "../actions/game";
 
 const initialState = {
-  payerTurn: "",
+
   isMatch: false,
  
   player1: {
@@ -27,7 +27,9 @@ const gameReducer = (state = initialState, action) => {
   // socket.emit("r1",state)
   switch (action.type) {
     case START_GAME:
-      return;
+        return {...state, player1:{...state.player1,id:action.id1},player2:{...state.player2,id:action.id2}}
+
+      ;
 
     // socket.emit("r1",state)
 
