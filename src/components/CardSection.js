@@ -1,12 +1,9 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { io } from "socket.io-client";
-import { useSelector } from "react-redux";
-import { DATACARD, PLAYERS } from "../dummy-data/data";
+import _ from "lodash";
 import Card from "./Card";
-import { useDispatch } from "react-redux";
-import { startGame } from "../store/actions/game";
-const ENDPOINT = "http://localhost:8900/";
+const ENDPOINT = "http://localhost:8080/";
 
 //////////////////////
 const CardSectionContainer = styled.div`
@@ -20,47 +17,98 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const CardSection = () => {
-    const disptach = useDispatch();
-    const [player1id , setPlayer1id] =  useState()
-    const [player2id , setPlayer2id] =  useState()
-  const state = useSelector((state) => state.game);
-  console.log(state)
-
-  
-  const player1Cards = state.player1.DATACARD.map((card) => {
-    return <Card cardImg={card.img} val={card.val} />;
-  });
-
-  const player2Cards = state.player2.DATACARD.map((card) => {
-    return <Card cardImg={card.img} val={card.val} />;
-  });
-
-  const socket = io(ENDPOINT);
-
-        useEffect(() => {
-            socket.on("connect", () => {
-                console.log(socket.id)
-               });
-             
-               socket.on("connect", () => {
-                console.log(socket.id)
-               });
-        }, [])
-     
-      
-    
-  
-
-  
- 
-
-if(player1id && player2id)
-{
+let socket;
+const cards = [
+  {
+    img:
+      "https://previews.123rf.com/images/pandawild/pandawild1509/pandawild150900125/45128572-poker-carte-%C3%A0-jouer-10-de-diamant.jpg",
+    id: "10-heart", isFliped:false
+  },
+  {
+    img:
+      "https://upload.wikimedia.org/wikipedia/commons/c/ce/Poker-sm-224-Jh.png",
+    id: "valets-heart", isFliped:false
+  },
+  {
+    img:
+      "https://st.depositphotos.com/2127699/2238/i/950/depositphotos_22389279-stock-photo-playing-card-queen-of-hearts.jpg",
+    id: "reine-heart", isFliped:false
+  },
+  {
+    img:
+      "https://images.freeimages.com/images/premium/previews/1783/17837166-playing-card-king-of-hearts.jpg",
+    id: "roi-heart", isFliped:false
+  },
+  {
+    img:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Ace_of_hearts.svg/1200px-Ace_of_hearts.svg.png",
+    id: "as-heart",
    
-    disptach(startGame(player1id,player2id))
-}
- 
+    isFliped:false
+  }
+];
+
+const CardSection = ({ room }) => {
+  const [gameState, setGameState] = useState({
+    room: "roomId",
+    gameOver: false,
+    gameStarted: false,
+    turn: "Player 1", //id
+    globalTimer: 60,
+    player1Timer: 0,
+    player2Timer: 0,
+    player1Deck: _.shuffle(cards),
+    player2Deck: _.shuffle(cards),
+    player1points: 0,
+    player2points: 0
+  });
+
+  const [roomFull, setRoomFull] = useState(false);
+
+  const player1Cards = gameState.player1Deck.map((card, i) => {
+    return <Card key={i} cardImg={card.img} val={card.id} />;
+  });
+  
+
+  const player2Cards = gameState.player2Deck.map((card, i) => {
+    return <Card key={i} cardImg={card.img} id={card.id} />;
+  });
+
+  useEffect(() => {
+    const connectionOptions = {
+      forceNew: true,
+      reconnectionAttempts: "Infinity",
+      timeout: 10000,
+      transports: ["websocket"]
+    };
+    socket = io.connect(ENDPOINT, connectionOptions);
+
+    if (room) {
+      socket.emit("join", { room: room }, (error) => {
+        if (error) setRoomFull(true);
+      });
+      socket.emit("initGameState", gameState);
+    }
+
+    //cleanup on component unmount
+    return function cleanup() {
+      socket.emit("disconnect1");
+      //shut down connnection instance
+      socket.off();
+    };
+  }, [room]);
+
+  //init state game
+  // useEffect(() => {
+  //   socket.emit("initGameState", gameState);
+  // }, [room]);
+
+  useEffect(() => {
+    socket.on("initGameState", (data) => {
+      console.log(data);
+      setGameState(data);
+    });
+  }, [room]);
 
   return (
     <Container>

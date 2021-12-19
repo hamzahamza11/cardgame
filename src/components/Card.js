@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 const CardContainer = styled.div`
   height: 150px;
   width: 100px;
@@ -11,9 +11,9 @@ const CardContainer = styled.div`
   }
 `;
 
-const Card = ({ cardImg, cardValue }) => {
+const Card = ({ cardImg, cardValue  }) => {
   const [isFliped, setIsFliped] = useState(false);
-   const state = useSelector(state => state)
+  //  const state = useSelector(state => state)
 
   
   const cardBack =

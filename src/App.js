@@ -1,23 +1,23 @@
 
 import GamePage from "./pages/GamePage"
-import {createStore, combineReducers} from "redux"
-import { Provider } from 'react-redux';
-import gameReducer from "./store/reducers/game";
+import './App.css'
+import { BrowserRouter, Route,  Routes, Redirect } from "react-router-dom";
+import Home from './pages/Home'
 
-const rootReducer = combineReducers({
-  game : gameReducer
-})
 
-const store = createStore(rootReducer)
-
-function App() {
+const App = () => {
   return (
-   <Provider store={store}>
-     <GamePage/>
-   </Provider>
-      
+    <BrowserRouter>
+     < Routes>
+       <Route path='/'  element={<Home />} />
+      <Route path='/play' element={<GamePage/>} />
+    </Routes>
+    
+    </BrowserRouter>
    
-  );
+   
+  )
 }
 
-export default App;
+export default App
+
